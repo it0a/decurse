@@ -1,81 +1,91 @@
 # decurse
 
-A [Heroku](http://www.heroku.com) web app using Compojure.
 
-This generated project has a few basics set up beyond the bare Compojure defaults:
+## Development
 
-* Cookie-backed session store
-* Stack traces when in development
-* Environment-based config via [environ](https://github.com/weavejester/environ)
-* [HTTP-based REPL debugging](https://devcenter.heroku.com/articles/debugging-clojure) via [drawbridge](https://github.com/cemerick/drawbridge)
+Open a terminal and type `lein repl` to start a Clojure REPL
+(interactive prompt).
 
-## Usage
+In the REPL, type
 
-To start a local web server for development you can either eval the
-commented out forms at the bottom of `web.clj` from your editor or
-launch from the command line:
+```clojure
+(run)
+(browser-repl)
+```
 
-    $ lein run -m decurse.web
+The call to `(run)` does two things, it starts the webserver at port
+10555, and also the Figwheel server which takes care of live reloading
+ClojureScript code and CSS. Give them some time to start.
 
-Initialize a git repository for your project.
+Running `(browser-repl)` starts the Weasel REPL server, and drops you
+into a ClojureScript REPL. Evaluating expressions here will only work
+once you've loaded the page, so the browser can connect to Weasel.
 
-    $ git init
-    $ git add .
-    $ git commit -m "Initial commit."
+When you see the line `Successfully compiled "resources/public/app.js"
+in 21.36 seconds.`, you're ready to go. Browse to
+`http://localhost:10555` and enjoy.
 
-You'll need the [heroku toolbelt](https://toolbelt.herokuapp.com)
-installed to manage the heroku side of your app. Once it's installed,
-get the app created:
+**Attention: It is not longer needed to run `lein figwheel`
+  separately. This is now taken care of behind the scenes**
 
-    $ heroku apps:create decurse
-    Creating decurse... done, stack is cedar
-    http://decurse.herokuapp.com/ | git@heroku.com:decurse.git
-    Git remote heroku added
+## Trying it out
 
-You can deploy the skeleton project immediately:
+If all is well you now have a browser window saying 'Hello Chestnut',
+and a REPL prompt that looks like `cljs.user=>`.
 
-    $ git push heroku master
-    Writing objects: 100% (13/13), 2.87 KiB, done.
-    Total 13 (delta 0), reused 0 (delta 0)
+Open `resources/public/css/style.css` and change some styling of the
+H1 element. Notice how it's updated instantly in the browser.
 
-    -----> Heroku receiving push
-    -----> Clojure app detected
-    -----> Installing Leiningen
-           Downloading: leiningen-2.0.0-preview7-standalone.jar
-    [...]
-    -----> Launching... done, v3
-           http://decurse.herokuapp.com deployed to Heroku
+Open `src/cljs/decurse/core.cljs`, and change `dom/h1` to
+`dom/h2`. As soon as you save the file, your browser is updated.
 
-    To git@heroku.com:decurse.git
-     * [new branch]      master -> master
+In the REPL, type
 
-It's live! Hit it with `curl`:
+```
+(ns decurse.core)
+(swap! app-state assoc :text "Interactivity FTW")
+```
 
-    $ curl http://decurse.herokuapp.com
-    ["Hello" :from Heroku]
+Notice again how the browser updates.
 
-The cookie-backed session store needs a session secret configured for encryption:
+## Deploying to Heroku
 
-    $ heroku config:add SESSION_SECRET=$RANDOM_16_CHARS
+This assumes you have a
+[Heroku account](https://signup.heroku.com/dc), have installed the
+[Heroku toolbelt](https://toolbelt.heroku.com/), and have done a
+`heroku login` before.
 
-## Remote REPL
+``` sh
+git init
+git add -A
+git commit
+heroku create
+git push heroku master:master
+heroku open
+```
 
-The [devcenter article](https://devcenter.heroku.com/articles/debugging-clojure)
-has a detailed explanation, but using the `repl` task from Leiningen
-2.x lets you connect a REPL to a remote process over HTTP. The first
-step is setting up credentials:
+## Running with Foreman
 
-    $ heroku config:add REPL_USER=[...] REPL_PASSWORD=[...]
+Heroku uses [Foreman](http://ddollar.github.io/foreman/) to run your
+app, which uses the `Procfile` in your repository to figure out which
+server command to run. Heroku also compiles and runs your code with a
+Leiningen "production" profile, instead of "dev". To locally simulate
+what Heroku does you can do:
 
-Then you can launch the REPL:
+``` sh
+lein with-profile -dev,+production uberjar && foreman start
+```
 
-    $ lein repl :connect http://$REPL_USER:$REPL_PASSWORD@decurse.herokuapp.com/repl
-
-Everything you enter will be evaluated remotely in the running dyno,
-which can be very useful for debugging or inspecting live data.
+Now your app is running at
+[http://localhost:5000](http://localhost:5000) in production mode.
 
 ## License
 
-Copyright © 2015 FIXME
+Copyright © 2014 FIXME
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Distributed under the Eclipse Public License either version 1.0 or (at
+your option) any later version.
+
+## Chestnut
+
+Created with [Chestnut](http://plexus.github.io/chestnut/) 0.7.0.
