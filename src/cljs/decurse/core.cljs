@@ -2,7 +2,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]))
 
-(defonce app-state (atom {:text "Hello Chestnut!"}))
+(defonce app-state (atom {:text "decur.se"}))
 
 (defn main []
   (om/root
