@@ -8,7 +8,7 @@
             [ring.middleware.reload :as reload]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [environ.core :refer [env]]
-            [ring.adapter.jetty :refer [run-jetty]]))
+            [org.httpkit.server :refer [run-server]]))
 
 (deftemplate page (io/resource "index.html") []
   [:body] (if is-dev? inject-devmode-html identity))
@@ -26,7 +26,7 @@
 (defn run-web-server [& [port]]
   (let [port (Integer. (or port (env :port) 10555))]
     (print "Starting web server on port" port ".\n")
-    (run-jetty http-handler {:port port :join? false})))
+    (run-server http-handler {:port port :join? false})))
 
 (defn run-auto-reload [& [port]]
   (auto-reload *ns*)
