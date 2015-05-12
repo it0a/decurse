@@ -1,3 +1,20 @@
+/*----------------------------*\
+           #headings
+\*----------------------------*/
+
 h1 {
-  text-decoration: underline;
+}
+
+body {
+}
+
+.btn {
+    display: inline-block;
+    padding: 1em 2em;
+    vertical-align: middle;
+}
+
+.btn--positive {
+    background-color: green;
+    color: white;
 }
