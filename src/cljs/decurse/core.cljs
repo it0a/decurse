@@ -4,18 +4,29 @@
 
 (defonce app-state (atom {:text "Hello Chestnut!"}))
 
-(defn header []
-  (dom/div nil
+(defn render-header []
+  (dom/div #js {:className "page-header-content"}
            (dom/h1 nil (str "decurse"))))
 
 (defn render-paragraphs
   [paragraphs]
-  (map #(dom/p nil (str %) paragraphs)))
+  (map #(dom/p nil (om/value %)) paragraphs))
 
-(defn body []
+(def introduction-paragraphs
+  ["Article introduction."
+   "I can reload this on the fly using Figwheel."
+   "When I add data to this and save, the DOM updates automatically without needing to refresh the browser."])
+
+(def how-it-works-paragraphs
+  ["MAGIC!"
+   "More Magic"])
+
+(defn render-body []
   (dom/div nil
-           (render-paragraphs ["hello" "goodbye"])
-           (dom/button #js {:className "btn btn--positive"} (str "hello"))))
+           (dom/h2 nil (om/value "Introduction"))
+           (apply dom/div nil (render-paragraphs introduction-paragraphs))
+           (dom/h2 nil (om/value "How it works"))
+           (apply dom/div nil (render-paragraphs how-it-works-paragraphs))))
 
 (defn main []
   (om/root
@@ -24,7 +35,7 @@
        om/IRender
        (render [_]
          (dom/div nil
-                  (header)
-                  (body)))))
+                  (render-header)
+                  (render-body)))))
    app-state
    {:target (. js/document (getElementById "app"))}))
